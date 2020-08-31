@@ -5,11 +5,6 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 import math
 
-Train_Data = pd.read_csv('/content/drive/My Drive/dataset/‫‪Arrhythmia‬‬.csv', header=None)
-classes=Train_Data[279].unique()
-class_label = Train_Data[279]
-Train_Data = Train_Data.drop([279], 1)
-
 
 def run_one_vs_all(class_labels):
     labels= []
@@ -50,6 +45,10 @@ def get_entropy(y_predict, y_real):
     s_false, n_false = entropy_of_one_division(y_real[~y_predict]) # right hand side entropy
     s = n_true*1.0/n * s_true + n_false*1.0/n * s_false # overall entropy, again weighted average
     return s
+
+
+
+
 
 class DecisionTreeClassifier(object):
     def __init__(self, max_depth):
@@ -160,36 +159,3 @@ def accuracy(pred, label):
         if pred[i] == v:
             acc += 1
     return acc/size
-
-
-pre_proccess()
-labels = (run_one_vs_all(class_label.copy()))
-train_data = Train_Data[0:400]
-test_data = Train_Data[401:]
-test_labels = class_label[401:]
-
-decision_trees = generate_trees(labels, train_data)
-trees_output = get_tree_pred(test_data, decision_trees)
-predictions = predict_class(trees_output)
-print(f'accuracy: {accuracy(predictions, test_labels) *100}%')
-
-scores =[]
-for i in range(len(labels)):
-    s = 0
-    for j in range(len(labels[i][401:])):
-        if labels[i][401:][j] == trees_output[i][j]:
-            s += 1
-    scores.append(s/len(labels[i][401:]))
-
-
-
-for i in range(len(scores)):
-    print(f"classifiers for label {classes[i]}: \t accuracy = {scores[i]*100}%")
-print(f"mean accuracy: {sum(scores)/len(scores)}%")
-
-results = confusion_matrix(test_labels, predictions) 
-print ('Confusion Matrix :')
-print(results)
-
-len(labels)
-
